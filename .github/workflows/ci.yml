@@ -1,4 +1,4 @@
-name: CI Pipeline
+run: docker build -t tempconverter:latest -f Containerfile .run: docker build -t tempconverter:latest -f Containerfile .name: CI Pipeline
 
 on:
   push:
@@ -25,5 +25,5 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
       - name: Build container image
-        run: docker build -t tempconverter:latest .
+        run: docker build -t tempconverter:latest -f Containerfile .
 
