@@ -1,4 +1,4 @@
-run: docker build -t tempconverter:latest -f Containerfile .run: docker build -t tempconverter:latest -f Containerfile .name: CI Pipeline
+name: CI Pipeline
 
 on:
   push:
@@ -7,15 +7,6 @@ on:
 jobs:
   test-and-build:
     runs-on: ubuntu-latest
-    services:
-      mysql:
-        image: mysql:8
-        env:
-          MYSQL_ROOT_PASSWORD: rootpass
-          MYSQL_DATABASE: tempconverter
-          MYSQL_USER: appuser
-          MYSQL_PASSWORD: apppass
-        options: --health-cmd="mysqladmin ping" --health-interval=10s
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python
@@ -26,4 +17,3 @@ jobs:
         run: pip install -r requirements.txt
       - name: Build container image
         run: docker build -t tempconverter:latest -f Containerfile .
-
