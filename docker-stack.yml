@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  app:
+    image: quay.io/scutvar/tempconverter:latest
+    ports:
+      - "80:5000"
+    environment:
+      DB_HOST: db
+      DB_NAME: tempconverter
+      DB_USER: appuser
+      DB_PASS: apppass
+      STUDENT: Stjepan Cutvaric
+      COLLEGE: Algebra Bernays University
+    deploy:
+      replicas: 2
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+    depends_on:
+      - db
+
+  db:
+    image: mysql:8
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: tempconverter
+      MYSQL_USER: appuser
+      MYSQL_PASSWORD: apppass
+    volumes:
+      - db_data:/var/lib/mysql
+    deploy:
+      replicas: 1
+
+volumes:
+  db_data:
