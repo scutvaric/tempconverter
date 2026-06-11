@@ -7,6 +7,17 @@ on:
 jobs:
   test-and-build:
     runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8
+        env:
+          MYSQL_ROOT_PASSWORD: rootpass
+          MYSQL_DATABASE: tempconverter
+          MYSQL_USER: appuser
+          MYSQL_PASSWORD: apppass
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=5
+        ports:
+          - 3306:3306
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python
@@ -14,6 +25,9 @@ jobs:
         with:
           python-version: '3.11'
       - name: Install dependencies
-        run: pip install -r requirements.txt
-      - name: Build container image
-        run: docker build -t tempconverter:latest -f Containerfile .
+        run: pip install -r requirements.txt pytest
+      - name: Run unit tests
+        run: python -m pytest tests/unit/ -v
+      - name: Run integration tests
+        env:
+          DB_HOST: 127.0.0.1
