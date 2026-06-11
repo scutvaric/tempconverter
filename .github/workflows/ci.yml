@@ -15,7 +15,11 @@ jobs:
           MYSQL_DATABASE: tempconverter
           MYSQL_USER: appuser
           MYSQL_PASSWORD: apppass
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=5
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
         ports:
           - 3306:3306
     steps:
@@ -31,3 +35,9 @@ jobs:
       - name: Run integration tests
         env:
           DB_HOST: 127.0.0.1
+          DB_NAME: tempconverter
+          DB_USER: appuser
+          DB_PASS: apppass
+        run: python -m pytest tests/integration/ -v
+      - name: Build container image
+        run: docker build -t tempconverter:latest -f Containerfile .
